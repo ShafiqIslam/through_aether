@@ -17,7 +17,7 @@ contract SimpleStorage {
         someValue = v;
     }
 
-    function retrieve() public view returns(uint256) {
+    function retrieve() public virtual view returns(uint256) {
         return someValue;
     }
     
