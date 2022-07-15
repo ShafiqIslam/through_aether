@@ -1,11 +1,9 @@
 from brownie import SimpleCollectible
-from scripts.helpers import get_account
+from scripts.helpers import get_account, get_open_sea_url
 
 sample_token_uri = (
     "ipfs://Qmd9MCGtdVz2miNumBHDbvj8bigSgTwnr4SbyH6DNnpWdt?filename=0-PUG.json"
 )
-
-opensea_url = "https://testnets.opensea.io/assets/{}/{}"
 
 
 def deploy_and_create():
@@ -14,7 +12,7 @@ def deploy_and_create():
     tx = simple_collectible.create(sample_token_uri, {"from": account})
     tx.wait(1)
     token_id = tx.return_value
-    nft_opensea_url = opensea_url.format(simple_collectible.address, token_id)
+    nft_opensea_url = get_open_sea_url(simple_collectible, token_id)
     print(f"View on: {nft_opensea_url}")
     return simple_collectible
 

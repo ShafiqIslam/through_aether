@@ -1,5 +1,6 @@
 from brownie import network, accounts, config
 
+
 LOCAL_BLOCKCHAINS = ["development", "ganache-local"]
 FORKED_BLOCKCHAINS = ["mainnet-fork"]
 
@@ -36,3 +37,12 @@ def get_dev_account():
 
 def get_active_network_config():
     return config["networks"][network.show_active()]
+
+
+def get_vrf_key_hash():
+    return get_active_network_config()["vrf_key_hash"]
+
+
+def get_open_sea_url(contract, token_id):
+    opensea_url = "https://testnets.opensea.io/assets/{}/{}"
+    return opensea_url.format(contract.address, token_id)
