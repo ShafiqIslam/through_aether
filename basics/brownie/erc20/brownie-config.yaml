@@ -1,0 +1,9 @@
+dotenv: .env
+wallets:
+  owner: ${OWNER_PRIVATE_KEY}
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.7.0
+compiler:
+  solc:
+    remappings:
+      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.7.0'
