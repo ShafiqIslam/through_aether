@@ -1,14 +1,12 @@
-from scripts.helpers import get_account, is_not_dev_network, ether_to_wei
+from scripts.helpers import get_account, is_not_dev_network, eth_to_wei
 from scripts.dependencies import get_contract_address
 from brownie import DappToken, TokenFarm
 
-ALLOWED_TOKENS = {
-    "weth_token": "eth_usd_price_feed",
-    "fau_token": "dai_usd_price_feed"
-}
+ALLOWED_TOKENS = {"weth_token": "eth_usd_price_feed", "fau_token": "dai_usd_price_feed"}
+
 
 def deploy_dapp_token():
-    return DappToken.deploy(ether_to_wei(10000), {"from": get_account()})
+    return DappToken.deploy(eth_to_wei(10000), {"from": get_account()})
 
 
 def deploy_token_farm(dapp_token):
@@ -23,7 +21,7 @@ def deploy_token_farm(dapp_token):
 def transfer_dapp_token_to_farm(dapp_token, token_farm):
     tx = dapp_token.transfer(
         token_farm.address,
-        dapp_token.totalSupply() - ether_to_wei(100),
+        dapp_token.totalSupply() - eth_to_wei(100),
         {"from": get_account()},
     )
     tx.wait(1)
@@ -32,9 +30,7 @@ def transfer_dapp_token_to_farm(dapp_token, token_farm):
 def allow_a_token(token_farm, token_name):
     token = get_contract_address(token_name)
     price_feed = get_contract_address(ALLOWED_TOKENS[token_name])
-    tx = token_farm.addAllowedTokens(
-        token, price_feed, {"from": get_account()}
-    )
+    tx = token_farm.addAllowedTokens(token, price_feed, {"from": get_account()})
     tx.wait(1)
 
 
