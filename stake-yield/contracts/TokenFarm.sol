@@ -19,8 +19,9 @@ contract TokenFarm is Ownable {
     EnumerableSet.AddressSet internal stakeholders;
     IERC20 internal dappToken;
 
-    constructor(address _dappTokenAddress) {
+    constructor(address _dappTokenAddress, address _dappTokenPriceFeed) {
         dappToken = IERC20(_dappTokenAddress);
+        addAllowedToken(_dappTokenAddress, _dappTokenPriceFeed);
     }
 
     function addAllowedToken(address _token, address _priceFeed)

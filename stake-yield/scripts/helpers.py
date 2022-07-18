@@ -1,4 +1,5 @@
 from brownie import network, accounts, config
+from web3 import Web3
 
 
 LOCAL_BLOCKCHAINS = ["development", "ganache-local"]
@@ -37,3 +38,6 @@ def get_dev_account():
 
 def get_active_network_config():
     return config["networks"][network.show_active()]
+
+def ether_to_wei(eth):
+    return Web3.toWei(eth, "ether")
