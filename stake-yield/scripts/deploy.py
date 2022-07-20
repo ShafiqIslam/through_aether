@@ -11,7 +11,7 @@ def deploy_dapp_token():
 
 def deploy_token_farm(dapp_token):
     return TokenFarm.deploy(
-        dapp_token.address,
+        dapp_token,
         get_contract_address("dai_usd_price_feed"),
         {"from": get_account()},
         publish_source=is_not_dev_network(),
@@ -20,7 +20,7 @@ def deploy_token_farm(dapp_token):
 
 def transfer_dapp_token_to_farm(dapp_token, token_farm):
     tx = dapp_token.transfer(
-        token_farm.address,
+        token_farm,
         dapp_token.totalSupply() - eth_to_wei(100),
         {"from": get_account()},
     )
@@ -30,7 +30,7 @@ def transfer_dapp_token_to_farm(dapp_token, token_farm):
 def allow_a_token(token_farm, token_name):
     token = get_contract_address(token_name)
     price_feed = get_contract_address(ALLOWED_TOKENS[token_name])
-    tx = token_farm.addAllowedTokens(token, price_feed, {"from": get_account()})
+    tx = token_farm.addAllowedToken(token, price_feed, {"from": get_account()})
     tx.wait(1)
 
 

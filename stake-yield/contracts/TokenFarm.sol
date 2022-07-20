@@ -36,6 +36,14 @@ contract TokenFarm is Ownable {
         return allowedTokens.contains(_token);
     }
 
+    function getTokenValueWRTWei(address _token) public view returns (uint256) {
+        AggregatorV3Interface _priceFeed = AggregatorV3Interface(
+            tokenPriceFeeds[_token]
+        );
+        (, int256 price, , , ) = _priceFeed.latestRoundData();
+        return uint256(price) * (10**(18 - _priceFeed.decimals()));
+    }
+
     function stake(address _token, uint256 _amount) public {
         require(_amount > 0, "Amount must be greater than 0.");
         require(isTokenAllowed(_token), "Token is not allowed.");
@@ -49,6 +57,18 @@ contract TokenFarm is Ownable {
         stakeholders.add(msg.sender);
     }
 
+    function getTotalStakedTokenByAllStakeholders(address _token) public view returns (uint256) {
+        uint256 result = 0;
+        for (uint256 i = 0; i < stakeholders.length(); i++) {
+            result += stakesByToken[_token][stakeholders.at(i)];
+        }
+        return result;
+    }
+
+    function isStakeholder(address _user) public view returns (bool) {
+        return stakeholders.contains(_user);
+    }
+
     function unstake(address _token) public {
         uint256 _tokenBalance = getStakeholderTokenBalance(msg.sender, _token);
         require(_tokenBalance > 0, "Balance must be greater than 0.");
@@ -57,20 +77,28 @@ contract TokenFarm is Ownable {
 
         stakesByToken[_token][msg.sender] = 0;
         stakesByHolder[msg.sender].remove(_token);
-        if (!doesStakeholderHaveAnyToken(msg.sender)) {
+        if (stakesByHolder[msg.sender].length() == 0) {
             stakeholders.remove(msg.sender);
         }
     }
 
-    function getStakeholderTokenBalance(address _stakeholder, address _token)
+    function getStakeholderTokenBalance(address _holder, address _token)
         public
         view
         returns (uint256)
     {
-        return
-            stakesByHolder[_stakeholder].contains(_token)
-                ? stakesByHolder[_stakeholder].get(_token)
-                : 0;
+        return stakesByHolder[_holder].contains(_token) 
+            ? stakesByHolder[_holder].get(_token) 
+            : 0;
+    }
+
+    function getStakeholderTokenValueWRTWei(address _stakeholder, address _token)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 _tokenBalance = getStakeholderTokenBalance(_stakeholder, _token);
+        return (getTokenValueWRTWei(_token) * _tokenBalance) / (10**18);
     }
 
     function reward() public onlyOwner {
@@ -84,33 +112,14 @@ contract TokenFarm is Ownable {
         view
         returns (uint256)
     {
-        require(doesStakeholderHaveAnyToken(_holder), "Unknown stakeholder.");
+        require(isStakeholder(_holder), "Unknown stakeholder.");
 
         uint256 balance = 0;
-        address _tokenAddress;
-        uint256 _tokenBalance;
+        address _token;
         for (uint256 i = 0; i < stakesByHolder[_holder].length(); i++) {
-            (_tokenAddress, _tokenBalance) = stakesByHolder[_holder].at(i);
-            balance +=
-                (getTokenValueWRTWei(_tokenAddress) * _tokenBalance) /
-                (10**18);
+            (_token, ) = stakesByHolder[_holder].at(i);
+            balance += getStakeholderTokenValueWRTWei(_holder, _token);
         }
         return balance;
-    }
-
-    function doesStakeholderHaveAnyToken(address _stakeholder)
-        public
-        view
-        returns (bool)
-    {
-        return stakesByHolder[_stakeholder].length() > 0;
-    }
-
-    function getTokenValueWRTWei(address _token) public view returns (uint256) {
-        AggregatorV3Interface _priceFeed = AggregatorV3Interface(
-            tokenPriceFeeds[_token]
-        );
-        (, int256 price, , , ) = _priceFeed.latestRoundData();
-        return uint256(price) * (10**(18 - _priceFeed.decimals()));
     }
 }

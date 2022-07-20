@@ -8,8 +8,6 @@ from brownie import MockV3AggregatorDAIUSD, MockV3AggregatorETHUSD, MockWETH, Mo
 
 
 def deploy_v3_aggegator(contract_type, decimals, starting_price):
-    decimals = 8
-    starting_price = 2000
     starting_price_wrt_gwei = starting_price * (10**decimals)
     contract_type.deploy(
         decimals,
