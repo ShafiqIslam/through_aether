@@ -5,5 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MockWETH is ERC20 {
-    constructor() ERC20("Mock WETH", "WETH") {}
+    constructor(uint256 initialSupplyInWei) ERC20("Mock WETH", "WETH") {
+        _mint(msg.sender, initialSupplyInWei);
+    }
 }

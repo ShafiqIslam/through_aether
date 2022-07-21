@@ -36,7 +36,7 @@ contract TokenFarm is Ownable {
         return allowedTokens.contains(_token);
     }
 
-    function getTokenValueWRTWei(address _token) public view returns (uint256) {
+    function getTokenUnitValue(address _token) public view returns (uint256) {
         AggregatorV3Interface _priceFeed = AggregatorV3Interface(
             tokenPriceFeeds[_token]
         );
@@ -52,12 +52,12 @@ contract TokenFarm is Ownable {
 
         stakesByToken[_token][msg.sender] += _amount;
 
-        uint256 _tokenBalance = getStakeholderTokenBalance(msg.sender, _token);
+        uint256 _tokenBalance = isStakeholder(msg.sender) ? getStakeholderTokenBalance(msg.sender, _token) : 0;
         stakesByHolder[msg.sender].set(_token, _tokenBalance + _amount);
         stakeholders.add(msg.sender);
     }
 
-    function getTotalStakedTokenByAllStakeholders(address _token) public view returns (uint256) {
+    function getTotalStakedToken(address _token) public view returns (uint256) {
         uint256 result = 0;
         for (uint256 i = 0; i < stakeholders.length(); i++) {
             result += stakesByToken[_token][stakeholders.at(i)];
@@ -70,6 +70,8 @@ contract TokenFarm is Ownable {
     }
 
     function unstake(address _token) public {
+        require(isStakeholder(msg.sender), "Unknown stakeholder.");
+
         uint256 _tokenBalance = getStakeholderTokenBalance(msg.sender, _token);
         require(_tokenBalance > 0, "Balance must be greater than 0.");
 
@@ -87,18 +89,20 @@ contract TokenFarm is Ownable {
         view
         returns (uint256)
     {
+        require(isStakeholder(_holder), "Unknown stakeholder.");
+
         return stakesByHolder[_holder].contains(_token) 
             ? stakesByHolder[_holder].get(_token) 
             : 0;
     }
 
-    function getStakeholderTokenValueWRTWei(address _stakeholder, address _token)
+    function getStakeholderTokenValue(address _stakeholder, address _token)
         public
         view
         returns (uint256)
     {
         uint256 _tokenBalance = getStakeholderTokenBalance(_stakeholder, _token);
-        return (getTokenValueWRTWei(_token) * _tokenBalance) / (10**18);
+        return (getTokenUnitValue(_token) * _tokenBalance) / (10**18);
     }
 
     function reward() public onlyOwner {
@@ -107,7 +111,7 @@ contract TokenFarm is Ownable {
         }
     }
 
-    function getStakeholderTotalBalance(address _holder)
+    function getStakeholderTotalValue(address _holder)
         public
         view
         returns (uint256)
@@ -118,7 +122,7 @@ contract TokenFarm is Ownable {
         address _token;
         for (uint256 i = 0; i < stakesByHolder[_holder].length(); i++) {
             (_token, ) = stakesByHolder[_holder].at(i);
-            balance += getStakeholderTokenValueWRTWei(_holder, _token);
+            balance += getStakeholderTokenValue(_holder, _token);
         }
         return balance;
     }
