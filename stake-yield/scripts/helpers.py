@@ -7,10 +7,14 @@ FORKED_BLOCKCHAINS = ["mainnet-fork"]
 
 
 def get_account():
-    if is_dev_network():
+    if is_using_dummy_accounts():
         return get_dev_account()
     else:
         return accounts.add(config["wallets"]["owner"])
+
+
+def is_using_dummy_accounts():
+    return is_dev_network() and network.show_active() != "ganache-local"
 
 
 def is_dev_network():
@@ -30,6 +34,14 @@ def is_local_network():
 
 def is_not_local_network():
     return not is_local_network()
+
+
+def is_unit_test_network():
+    return network.show_active() == "development"
+
+
+def should_update_front_end():
+    return not is_unit_test_network()
 
 
 def get_dev_account():

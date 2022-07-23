@@ -10,6 +10,7 @@ compiler:
       - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.7.0"
       - "@chainlink=smartcontractkit/chainlink-brownie-contracts@0.4.1"
 networks:
+  default: ganache-local
   rinkeby:
     weth_token: 0xc778417E063141139Fce010982780140Aa0cD5Ab
     fau_token: 0xFab46E002BbF0b4509813474841E0716E6730136

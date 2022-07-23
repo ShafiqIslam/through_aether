@@ -1,10 +1,17 @@
+from web3 import Web3
 from scripts.helpers import (
     is_not_local_network,
     get_active_network_config,
     get_dev_account,
     is_local_network,
 )
-from brownie import MockV3AggregatorDAIUSD, MockV3AggregatorETHUSD, MockWETH, MockFAU, Contract
+from brownie import (
+    MockV3AggregatorDAIUSD,
+    MockV3AggregatorETHUSD,
+    MockWETH,
+    MockFAU,
+    Contract,
+)
 
 
 def deploy_v3_aggegator(contract_type, decimals, starting_price):
@@ -15,8 +22,11 @@ def deploy_v3_aggegator(contract_type, decimals, starting_price):
         {"from": get_dev_account()},
     )
 
-def deploy_mock_token(contract_type):
-    contract_type.deploy({"from": get_dev_account()})
+
+def deploy_mock_token(contract_type, initial_balance):
+    contract_type.deploy(
+        Web3.toWei(initial_balance, "ether"), {"from": get_dev_account()}
+    )
 
 
 DEPENDENCY_MOCKS = {
@@ -33,12 +43,12 @@ DEPENDENCY_MOCKS = {
     "weth_token": {
         "type": MockWETH,
         "function": deploy_mock_token,
-        "args": [MockWETH],
+        "args": [MockWETH, 10000],
     },
     "fau_token": {
         "type": MockFAU,
         "function": deploy_mock_token,
-        "args": [MockFAU],
+        "args": [MockFAU, 10000],
     },
 }
 

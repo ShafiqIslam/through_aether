@@ -1,4 +1,11 @@
-from scripts.helpers import get_account, is_not_dev_network, eth_to_wei
+import json
+import yaml
+from scripts.helpers import (
+    get_account,
+    is_not_dev_network,
+    eth_to_wei,
+    should_update_front_end,
+)
 from scripts.dependencies import get_contract_address
 from brownie import DappToken, TokenFarm
 
@@ -39,11 +46,20 @@ def add_extra_allowed_tokens_to_farm(token_farm):
         allow_a_token(token_farm, token_name)
 
 
+def update_front_end():
+    with open("brownie-config.yaml", "r") as brownie_config_yaml:
+        config_dict = yaml.load(brownie_config_yaml, Loader=yaml.FullLoader)
+        with open("./front_end/src/brownie-config.json", "w") as brownie_config_json:
+            json.dump(config_dict, brownie_config_json)
+
+
 def deploy():
     dapp_token = deploy_dapp_token()
     token_farm = deploy_token_farm(dapp_token)
     transfer_dapp_token_to_farm(dapp_token, token_farm)
     add_extra_allowed_tokens_to_farm(token_farm)
+    if should_update_front_end():
+        update_front_end()
 
 
 def main():
