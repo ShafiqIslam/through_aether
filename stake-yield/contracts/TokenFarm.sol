@@ -107,8 +107,12 @@ contract TokenFarm is Ownable {
 
     function reward() public onlyOwner {
         for (uint256 i = 0; i < stakeholders.length(); i++) {
-            dappToken.transfer(stakeholders.at(i), 0);
+            rewardStakeholder(stakeholders.at(i));
         }
+    }
+
+    function rewardStakeholder(address _stakeholder) public onlyOwner {
+        dappToken.transferFrom(msg.sender, _stakeholder, getStakeholderTotalValue(_stakeholder) / 10);
     }
 
     function getStakeholderTotalValue(address _holder)
