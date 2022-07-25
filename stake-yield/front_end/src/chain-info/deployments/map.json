@@ -1,0 +1,22 @@
+{
+  "1337": {
+    "DappToken": [
+      "0xedec6aD50E6Eba3e690eF02B5a7e62e3607f5809"
+    ],
+    "MockFAU": [
+      "0x1b0086594115E6F48ad9E498e50ad89edD8EE7eB"
+    ],
+    "MockV3AggregatorDAIUSD": [
+      "0xAD33dA0B2c2C8bbF7AaB39074Ce9970239610931"
+    ],
+    "MockV3AggregatorETHUSD": [
+      "0xAe1F32B0558A383C82A7ECf0A37b04d780c415D5"
+    ],
+    "MockWETH": [
+      "0xBde3d85bB1A37BCBa2aBEB099B9ADD0b2eFf9FC9"
+    ],
+    "TokenFarm": [
+      "0x08d911e5e20E859b1A54000b2B3E5E896b94b890"
+    ]
+  }
+}

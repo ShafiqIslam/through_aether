@@ -1,5 +1,7 @@
 import json
 import yaml
+import os
+import shutil
 from scripts.helpers import (
     get_account,
     is_not_dev_network,
@@ -47,10 +49,17 @@ def add_extra_allowed_tokens_to_farm(token_farm):
 
 
 def update_front_end():
+    copy_folders_to_front_end("./build", "./front_end/src/chain-info")
     with open("brownie-config.yaml", "r") as brownie_config_yaml:
         config_dict = yaml.load(brownie_config_yaml, Loader=yaml.FullLoader)
         with open("./front_end/src/brownie-config.json", "w") as brownie_config_json:
             json.dump(config_dict, brownie_config_json)
+
+
+def copy_folders_to_front_end(src, dest):
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    shutil.copytree(src, dest)
 
 
 def deploy():
