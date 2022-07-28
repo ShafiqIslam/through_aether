@@ -20,15 +20,11 @@ function Header() {
     <div className={classes.container}>
       <div>
         {isConnected ? (
-          <Button color="primary" variant="contained" onClick={deactivate}>
+          <Button color="secondary" variant="contained" onClick={deactivate}>
             Disconnect
           </Button>
         ) : (
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={activateBrowserWallet}
-          >
+          <Button color="primary" variant="contained" onClick={() => activateBrowserWallet()}>
             Connect
           </Button>
         )}

@@ -24,17 +24,10 @@ export const Main = () => {
   const classes = useStyles();
   const { account, chainId } = useEthers();
   let chainIdStr = chainId ? String(chainId) : "default";
-  const networkName = helperConfig[chainIdStr as keyof typeof helperConfig];
   const chainIdKey = chainIdStr as keyof typeof networkMapping;
-  const dappAddress = chainId
-    ? networkMapping[chainIdKey]["DappToken"][0]
-    : constants.AddressZero;
-  const wethAddress = chainId
-    ? networkMapping[chainIdKey]["MockWETH"][0]
-    : constants.AddressZero;
-  const fauAddress = chainId
-    ? networkMapping[chainIdKey]["MockFAU"][0]
-    : constants.AddressZero;
+  const dappAddress = chainId ? networkMapping[chainIdKey]["DappToken"][0] : constants.AddressZero;
+  const wethAddress = chainId ? networkMapping[chainIdKey]["MockWETH"][0] : constants.AddressZero;
+  const fauAddress = chainId ? networkMapping[chainIdKey]["MockFAU"][0] : constants.AddressZero;
 
   const supportedTokens: Array<Token> = [
     {
